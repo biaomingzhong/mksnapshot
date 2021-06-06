@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const { downloadArtifact } = require('@electron/get')
+const { downloadArtifact, initializeProxy } = require('@electron/get')
 const extractZip = require('extract-zip')
 const versionToDownload = require('./package').version
 let archToDownload = process.env.npm_config_arch
@@ -23,6 +23,9 @@ function download (version) {
     platform: process.env.npm_config_platform,
     arch: archToDownload,
     rejectUnauthorized: process.env.npm_config_strict_ssl === 'true',
+    mirrorOptions: {
+      mirror: 'https://cdn.npm.taobao.org/dist/electron/'
+    },
     quiet: ['info', 'verbose', 'silly', 'http'].indexOf(process.env.npm_config_loglevel) === -1
   })
 }
@@ -55,4 +58,5 @@ async function attemptDownload (version) {
   }
 }
 
+initializeProxy();
 attemptDownload(versionToDownload)
